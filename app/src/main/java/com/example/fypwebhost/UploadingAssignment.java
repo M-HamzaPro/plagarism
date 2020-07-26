@@ -4,8 +4,10 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
@@ -75,24 +77,24 @@ public class UploadingAssignment extends AppCompatActivity {
 
 
     }@RequiresApi(api = Build.VERSION_CODES.KITKAT)
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == PICKFILE_REQUEST_CODE && data != null && resultCode == RESULT_OK) {
-//            Uri uri = data.getData();
-//            path = new PathFromUri().getPathFromUri(UploadingAssignment.this, uri);
-//
-//            fileName = new PathFromUri().getFileName(UploadingAssignment.this,uri);
-//
-//
-//            uploadFile();
-//            Log.i(TAG, "data -- " + data.toString());
-//            Log.i(TAG, "uri -- " + ((Uri) uri).toString());
-//            Log.i(TAG, "file/path -- " + path);
-//            Log.i(TAG, "file name -- " + fileName);
-//
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICKFILE_REQUEST_CODE && data != null && resultCode == RESULT_OK) {
+            Uri uri = data.getData();
+            path = new PathFromUri().getPathFromUri(UploadingAssignment.this, uri);
+
+            fileName = new PathFromUri().getFileName(UploadingAssignment.this,uri);
+
+
+            uploadFile();
+            Log.i(TAG, "data -- " + data.toString());
+            Log.i(TAG, "uri -- " + ((Uri) uri).toString());
+            Log.i(TAG, "file/path -- " + path);
+            Log.i(TAG, "file name -- " + fileName);
+
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     private void uploadFile() {
         try {
