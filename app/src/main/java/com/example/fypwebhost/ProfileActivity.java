@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,25 +19,53 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    Button buttonSetChanges;
-    EditText editTextName, editTextPassword;
-//    String name, password, userId;
-
+    Button buttonSetChanges, buttonChangePassword;
+    EditText editTextName, editTextPassword, editTextOldPassword;
+    TextView textViewChangePassword;
+    TextInputLayout grpName, grpPassword, grpConfirmPassword, grpOldPassword;
     SharedPreferences prefs;
     String loginEmail, userId, userName, userPassword;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        buttonChangePassword = findViewById(R.id.buttonSetPassword);
+        textViewChangePassword = findViewById(R.id.textViewChangePassword);
+        textViewChangePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                grpPassword.setVisibility(View.VISIBLE);
+                grpConfirmPassword.setVisibility(View.VISIBLE);
+                grpOldPassword.setVisibility(View.VISIBLE);
+                buttonChangePassword.setVisibility(View.VISIBLE);
 
-        editTextName = findViewById(R.id.editTextTextPersonName);
-        editTextPassword = findViewById(R.id.editTextTextPersonPassword);
+                grpName.setVisibility(View.INVISIBLE);
+                textViewChangePassword.setVisibility(View.INVISIBLE);
+                buttonSetChanges.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        grpConfirmPassword = findViewById(R.id.grpConfirmPassword);
+        grpName = findViewById(R.id.grpName);
+        grpPassword = findViewById(R.id.grpPassword);
+        grpOldPassword = findViewById(R.id.grpOldPassword);
+
+        grpPassword.setVisibility(View.INVISIBLE);
+        grpConfirmPassword.setVisibility(View.INVISIBLE);
+        grpOldPassword.setVisibility(View.INVISIBLE);
+        buttonChangePassword.setVisibility(View.INVISIBLE);
+
+        editTextOldPassword = findViewById(R.id.editTextOldPassword);
+        editTextName = findViewById(R.id.editTextNewName);
+        editTextPassword = findViewById(R.id.editTextPassword);
 
         prefs = getSharedPreferences("LogIn", MODE_PRIVATE);
         loginEmail = prefs.getString("email", "No name defined");
