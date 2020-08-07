@@ -55,11 +55,12 @@ import java.util.UUID;
 import static android.app.Activity.RESULT_OK;
 public class ClassWork extends Fragment {
 
-    EditText editTextTitle, editTextDueDate, editTextPostDate;
-    String assigTitle, assigDueDate, assigPostDate, classCode, userType, classID, studentID;
+
+    String classCode, userType, classID, studentID;
     AssignmentModelClass assignmentModelClass;
     ListView listView;
     AssignmentAdapter adapter;
+
     //    ProgressBar progressBar;
     public static ArrayList<AssignmentModelClass> assignmentArrayList = new ArrayList<>();
     //    public static String URL="https://temp321.000webhostapp.com/connect/getAssignmentsInfo.php";
@@ -85,14 +86,25 @@ public class ClassWork extends Fragment {
 
 
 
-
-
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                assignmentModelClass = assignmentArrayList.get(position);
+                Intent intent = new Intent(getContext(), SimilarityResultCosine.class);
+                intent.putExtra("classID", classID);
+                intent.putExtra("studentID", studentID);
+                intent.putExtra("assignmentID", assignmentModelClass.getAssignmentID());
+                startActivity(intent);
+                return true;
+            }
+        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
 
                 assignmentModelClass = assignmentArrayList.get(position);
+
 
                 Dexter.withContext(getContext()).withPermission(Manifest.permission.READ_EXTERNAL_STORAGE).withListener(new PermissionListener() {
                     @Override
@@ -201,6 +213,11 @@ public class ClassWork extends Fragment {
             Log.i(TAG, "file/path -- " + path);
             Log.i(TAG, "file name -- " + fileName);
 
+//            Intent intent = new Intent(getContext(), SimilarityResultCosine.class);
+//        intent.putExtra("classID", classID);
+//        intent.putExtra("studentID", studentID);
+//        intent.putExtra("assignmentID", assignmentModelClass.getAssignmentID());
+//        startActivity(intent);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -222,5 +239,6 @@ public class ClassWork extends Fragment {
             e.printStackTrace();
         }
     }
+
 
 }

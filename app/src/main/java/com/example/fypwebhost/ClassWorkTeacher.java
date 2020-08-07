@@ -52,6 +52,7 @@ public class ClassWorkTeacher extends Fragment {
     EditText editTextTitle, editTextDueDate, editTextPostDate;
     String assigTitle, assigDueDate, assigPostDate, classCode, userType, classID;
 
+    AssignmentModelClass assignmentModelClass;
     ListView listView;
     AssignmentAdapter adapter;
     //    ProgressBar progressBar;
@@ -86,18 +87,14 @@ public class ClassWorkTeacher extends Fragment {
 //                final char type = studentEmail.charAt(0);
 
 
-                AssignmentModelClass assignmentModelClass = assignmentArrayList.get(position);
+                assignmentModelClass = assignmentArrayList.get(position);
                 Intent intent = new Intent(getContext(), StudentAssignment.class);
                 intent.putExtra("assignmentID", assignmentModelClass.getAssignmentID());
                 intent.putExtra("classID", classID);
+                Toast.makeText(getContext(), "class id = "+classID, Toast.LENGTH_SHORT).show();
                 startActivity(intent);
             }
         });
-
-
-
-
-
 
 
 
@@ -273,37 +270,8 @@ public class ClassWorkTeacher extends Fragment {
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(request);
     }
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PICKFILE_REQUEST_CODE && data != null && resultCode == RESULT_OK) {
-            Uri uri = data.getData();
-            path = new PathFromUri().getPathFromUri(getContext(), uri);
 
-            fileName = new PathFromUri().getFileName(getContext(),uri);
-            uploadFile();
-            Log.i(TAG, "data -- " + data.toString());
-            Log.i(TAG, "uri -- " + ((Uri) uri).toString());
-            Log.i(TAG, "file/path -- " + path);
-            Log.i(TAG, "file name -- " + fileName);
 
-        }
-        super.onActivityResult(requestCode, resultCode, data);
-    }
 
-    private void uploadFile() {
-        try {
-            new MultipartUploadRequest(getContext(), UUID.randomUUID().toString(), "https://temp321.000webhostapp.com/connect/uploadfile.php")
-                    .addFileToUpload(path, "file")
-                    .addParameter("fileName", fileName)
-                    .setNotificationConfig(new UploadNotificationConfig())
-                    .setMaxRetries(5)
-                    .startUpload();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-    }
 
 }

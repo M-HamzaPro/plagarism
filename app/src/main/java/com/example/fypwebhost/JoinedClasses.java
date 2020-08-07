@@ -1,13 +1,16 @@
 package com.example.fypwebhost;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,7 +41,7 @@ public class JoinedClasses extends Fragment {
     JoinedClassesAdapter adapter;
     ProgressBar progressBar;
     String userEmail, userIdOld, userName, userPassword;;
-
+    JoinedClassesModel joinedClassesModel;
     public static ArrayList<JoinedClassesModel> joinedClassesArrayList = new ArrayList<>();
 
     public JoinedClasses(String email, String userIdOld, String userName, String userPassword) {
@@ -57,9 +60,6 @@ public class JoinedClasses extends Fragment {
         View view = inflater.inflate(R.layout.joined_class_frgment, container, false);
         listView = view.findViewById(R.id.mylistview);
 
-//        //Toast.makeText(getContext()," email = "+studentEmail, Toast.LENGTH_SHORT).show();
-//        studentEmail = studentEmail.substring(3);
-        //Toast.makeText(getContext()," email == "+userEmail, Toast.LENGTH_SHORT).show();
         progressBar = (ProgressBar)view.findViewById(R.id.progressBar);
         Sprite circle = new Circle();
         progressBar.setIndeterminateDrawable(circle);
@@ -69,10 +69,7 @@ public class JoinedClasses extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-//                final char type = studentEmail.charAt(0);
-
-
-                JoinedClassesModel joinedClassesModel = joinedClassesArrayList.get(position);
+                joinedClassesModel = joinedClassesArrayList.get(position);
                 //Toast.makeText(getContext(), "Class_id"+joinedClassesModel.getId(), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getContext(), CurrentClass.class);
 
@@ -84,6 +81,15 @@ public class JoinedClasses extends Fragment {
             }
         });
 
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                joinedClassesModel = joinedClassesArrayList.get(position);
+
+                showLeaveDialog(userIdOld, joinedClassesModel.getClassID());
+                return true;
+            }
+        });
         return view;
     }
 
@@ -148,5 +154,82 @@ public class JoinedClasses extends Fragment {
 
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(request);
+    }
+
+
+
+    private void showLeaveDialog(final String studentIDR, final String classID)
+    {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+
+        LayoutInflater inflater = getLayoutInflater();
+
+        final View dialogView = inflater.inflate(R.layout.leave_class_dialog,null);
+
+        dialogBuilder.setView(dialogView);
+
+
+        final Button buttonLeaveClass = (Button) dialogView.findViewById(R.id.buttonLeaveClass);
+
+        dialogBuilder.setTitle("leave class:");
+
+        final AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+
+        buttonLeaveClass.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+
+                StringRequest request = new StringRequest(Request.Method.POST, "https://temp321.000webhostapp.com/connect/leaveClass.php",
+                        new Response.Listener<String>() {
+                            @Override
+                            public void onResponse(String response) {
+                                if(response.contains("Class leaved"))
+                                {
+                                    Toast.makeText(getActivity(), "Class leaved", Toast.LENGTH_SHORT).show();
+
+                                }
+                                else
+                                {
+                                    Toast.makeText(getActivity(), response, Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                ){
+                    @Override
+                    protected Map<String, String> getParams() throws AuthFailureError {
+                        Map<String, String > params = new HashMap<String, String>();
+
+                        params.put("studentID", studentIDR);
+                        params.put("classID", classID);
+
+                        return params;
+                    }
+                };
+
+                RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+                requestQueue.add(request);
+
+
+
+
+
+
+
+
+                alertDialog.dismiss();
+            }
+        });
+
+
     }
 }

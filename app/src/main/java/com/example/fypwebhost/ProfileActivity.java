@@ -27,7 +27,7 @@ import java.util.Map;
 public class ProfileActivity extends AppCompatActivity {
 
     Button buttonSetChanges, buttonChangePassword;
-    EditText editTextName, editTextPassword, editTextOldPassword;
+    EditText editTextName, editTextPassword, editTextOldPassword, editTextConfirmPassword;
     TextView textViewChangePassword;
     TextInputLayout grpName, grpPassword, grpConfirmPassword, grpOldPassword;
     SharedPreferences prefs;
@@ -66,6 +66,7 @@ public class ProfileActivity extends AppCompatActivity {
         editTextOldPassword = findViewById(R.id.editTextOldPassword);
         editTextName = findViewById(R.id.editTextNewName);
         editTextPassword = findViewById(R.id.editTextPassword);
+        editTextConfirmPassword = findViewById(R.id.editTextConfirmPassword);
 
         prefs = getSharedPreferences("LogIn", MODE_PRIVATE);
         loginEmail = prefs.getString("email", "No name defined");
@@ -78,25 +79,33 @@ public class ProfileActivity extends AppCompatActivity {
 //        userId = getIntent().getStringExtra("id");
 
         editTextName.setText(userName);
-        editTextPassword.setText(userPassword);
+
+
+        buttonChangePassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ProfileActivity.this, "hgghg", Toast.LENGTH_SHORT).show();
+                passwordChange();
+            }
+        });
 
         buttonSetChanges = findViewById(R.id.buttonSetChanges);
         buttonSetChanges.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                profileChange();
+                nameChange();
             }
         });
     }
+
+
     
-    
-    
-    private void profileChange() {
+    private void nameChange() {
 
         final String newName = editTextName.getText().toString().trim();
         final String newPassword = editTextPassword.getText().toString().trim();
 
-        if(newPassword.isEmpty() || newName.isEmpty())
+        if(newName.isEmpty())
         {
             editTextName.setError("This field is mandatory");
             editTextPassword.setError("This field is mandatory");
@@ -109,9 +118,9 @@ public class ProfileActivity extends AppCompatActivity {
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            if(response.contains("Profile updated"))
+                            if(response.contains("Name updated"))
                             {
-                                Toast.makeText(getApplicationContext(), "Profile updated", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Name updated", Toast.LENGTH_SHORT).show();
                                 Toast.makeText(getApplicationContext(), "Login Again to see updated content", Toast.LENGTH_SHORT).show();
                                 SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LogIn", Context.MODE_PRIVATE);
 
@@ -141,8 +150,74 @@ public class ProfileActivity extends AppCompatActivity {
                     Map<String, String > params = new HashMap<String, String>();
 
                     params.put("id", userId);
-                    params.put("password", newPassword);
                     params.put("name", newName);
+
+                    return params;
+                }
+            };
+
+            RequestQueue requestQueue = Volley.newRequestQueue(ProfileActivity.this);
+            requestQueue.add(request);
+        }
+    }
+
+    private void passwordChange() {
+
+
+        final String newPassword = editTextPassword.getText().toString().trim();
+        final String newPasswordConfirm = editTextConfirmPassword.getText().toString().trim();
+        final String oldPassword = editTextOldPassword.getText().toString().trim();
+
+        if(newPassword.isEmpty() || newPasswordConfirm.isEmpty() || oldPassword.isEmpty())
+        {
+            editTextOldPassword.setError("This field is mandatory");
+            editTextConfirmPassword.setError("This field is mandatory");
+            editTextPassword.setError("This field is mandatory");
+            Toast.makeText(this, "fill all text" , Toast.LENGTH_SHORT).show();
+        }
+
+        else
+        {
+            // progressBar.setVisibility(View.VISIBLE);
+            StringRequest request = new StringRequest(Request.Method.POST, "https://temp321.000webhostapp.com/connect/changePassword.php",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if(response.contains("Password updated"))
+                            {
+                                Toast.makeText(getApplicationContext(), "Password updated", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getApplicationContext(), "Login Again to see updated content", Toast.LENGTH_SHORT).show();
+                                SharedPreferences sharedPreferences = getApplicationContext().getSharedPreferences("LogIn", Context.MODE_PRIVATE);
+
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.clear();
+                                editor.commit();
+
+                                Intent intent1 = new Intent(getApplicationContext(), login.class);
+                                startActivity(intent1);
+                            }
+                            else
+                            {
+                                Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            ){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String > params = new HashMap<String, String>();
+
+                    params.put("id", userId);
+                    params.put("newPassword", newPassword);
+                    params.put("oldPassword", oldPassword);
+                    params.put("confirmPassword", newPasswordConfirm);
 
                     return params;
                 }

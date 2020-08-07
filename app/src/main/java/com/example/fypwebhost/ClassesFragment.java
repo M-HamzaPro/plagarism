@@ -85,7 +85,7 @@ public class ClassesFragment extends Fragment {
 
                     intent.putExtra("Class_name", classes.getName());
                     intent.putExtra("Class_id", classes.getClassCode());
-
+                    intent.putExtra("classID", classes.getClassID());
                     startActivity(intent);
             }
         });

@@ -4,11 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
-    tools:context=".StudentAssignment" >
+    tools:context=".SimilarityResultCosine">
 
-    <ListView
-        android:id="@+id/lestViewResult"
+    <TextView
+        android:id="@+id/textViewSimilarity"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Please Wait...."
+        android:textSize="30sp" />
 </LinearLayout>

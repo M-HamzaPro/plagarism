@@ -14,7 +14,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".StudentAssignment"></activity>
+        <activity android:name=".SimilarityResultCosine"></activity>
+        <activity android:name=".StudentAssignment" />
         <activity android:name=".jaro_winkler_algorithm" />
         <activity android:name=".CosineComparing" />
         <activity android:name=".UploadingAssignment" />
@@ -28,7 +29,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Create_Class" />
+
         <activity android:name=".Teacher_Activity" />
         <activity android:name=".Student_Activity" />
         <activity android:name=".login" />
